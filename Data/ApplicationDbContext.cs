@@ -18,6 +18,7 @@ namespace Gestionale.Data
         public DbSet<Product> Products { get; set; }    
         public DbSet<Category> Categories { get; set; }
 
+        
         protected override void OnModelCreating(ModelBuilder modelBuilder)
         {
 
@@ -25,6 +26,7 @@ namespace Gestionale.Data
             modelBuilder.Entity<OrderDetail>().Property(p => p.UnitPrice)
                                               .HasColumnType("decimal(18,4)");
 
+            /*
             modelBuilder.Entity<Customer>().HasData(
                 new Customer { CustomerID = 1, CompanyName = "Azienda1", ContactName = "Cliente uno", Address = "Via della azienda 1" },
                 new Customer { CustomerID = 2, CompanyName = "Azienda2", ContactName = "Cliente due", Address = "Via della azienda 2" },
@@ -69,6 +71,7 @@ namespace Gestionale.Data
                 new Category { CategoryID = 5, Name = "Quinta Categoria" }
                 );
             
+            */
             base.OnModelCreating(modelBuilder);
 
         }
