@@ -141,6 +141,21 @@ namespace Gestionale.Data
                 );
             context.SaveChanges();
 
+           
+
+            if (context.Orders.Any())
+            {
+                return;   // DB has been seeded
+            }
+
+            context.Orders.AddRange(
+                new Order { CustomerID = 4, EmployeeID = 5, OrderDate = new DateTime(2022, 02, 15), ShipAddress = "Via della spedizione 1" },
+                new Order { CustomerID = 5, EmployeeID = 4, OrderDate = new DateTime(2022, 02, 15), ShipAddress = "Via della spedizione 2" },
+                new Order { CustomerID = 2, EmployeeID = 3, OrderDate = new DateTime(2022, 02, 15), ShipAddress = "Via della spedizione 3" }
+                );
+            context.SaveChanges();
+
+
             if (context.OrderDetails.Any())
             {
                 return;   // DB has been seeded
@@ -153,17 +168,6 @@ namespace Gestionale.Data
                 );
             context.SaveChanges();
 
-            if (context.Orders.Any())
-            {
-                return;   // DB has been seeded
-            }
-
-            context.Orders.AddRange(
-                new Order { OrderID = 1, CustomerID = 4, EmployeeID = 5, OrderDate = new DateTime(2022, 02, 15), ShipAddress = "Via della spedizione 1" },
-                new Order { OrderID = 2, CustomerID = 5, EmployeeID = 4, OrderDate = new DateTime(2022, 02, 15), ShipAddress = "Via della spedizione 2" },
-                new Order { OrderID = 3, CustomerID = 2, EmployeeID = 3, OrderDate = new DateTime(2022, 02, 15), ShipAddress = "Via della spedizione 3" }
-                );
-            context.SaveChanges();
 
         }
 

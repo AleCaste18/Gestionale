@@ -12,7 +12,7 @@ using Microsoft.EntityFrameworkCore.Storage.ValueConversion;
 namespace Gestionale.Migrations
 {
     [DbContext(typeof(ApplicationDbContext))]
-    [Migration("20220217133609_add-HandlerClasses")]
+    [Migration("20220217160747_add-HandlerClasses")]
     partial class addHandlerClasses
     {
         protected override void BuildTargetModel(ModelBuilder modelBuilder)
