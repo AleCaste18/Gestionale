@@ -9,5 +9,17 @@
         public string Address { get; set; }
 
         public ICollection<Order> Orders { get; set; }
+
+
+        public string? OwnerID { get; set; }
+        public EmployeeStatus Status { get; set; }
     }
+
+    public enum EmployeeStatus 
+    {
+        Submitted,
+        Approved,
+        Rejected
+    }
+
 }
