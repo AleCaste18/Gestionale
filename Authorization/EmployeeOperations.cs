@@ -27,8 +27,8 @@ namespace Gestionale.Authorization
         public static readonly string ApproveOperationName = "Approve";
         public static readonly string RejectOperationName = "Reject";
 
-        public static readonly string EmployeeAdministratorsRole ="EmployeeAdministrators";
-        public static readonly string EmployeeManagersRole = "EmployeeManagers";
+        public static readonly string EmployeeAdministratorsRole ="Administrator";
+        public static readonly string EmployeeManagersRole = "Manager";
     }
 
 }

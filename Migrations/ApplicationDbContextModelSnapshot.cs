@@ -4,18 +4,16 @@ using Gestionale.Data;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.EntityFrameworkCore.Infrastructure;
 using Microsoft.EntityFrameworkCore.Metadata;
-using Microsoft.EntityFrameworkCore.Migrations;
 using Microsoft.EntityFrameworkCore.Storage.ValueConversion;
 
 #nullable disable
 
-namespace Gestionale.Data.Migrations
+namespace Gestionale.Migrations
 {
     [DbContext(typeof(ApplicationDbContext))]
-    [Migration("20220216110954_creazioneEntità")]
-    partial class creazioneEntità
+    partial class ApplicationDbContextModelSnapshot : ModelSnapshot
     {
-        protected override void BuildTargetModel(ModelBuilder modelBuilder)
+        protected override void BuildModel(ModelBuilder modelBuilder)
         {
 #pragma warning disable 612, 618
             modelBuilder
@@ -39,33 +37,6 @@ namespace Gestionale.Data.Migrations
                     b.HasKey("CategoryID");
 
                     b.ToTable("Categories");
-
-                    b.HasData(
-                        new
-                        {
-                            CategoryID = 1,
-                            Name = "Prima Categoria"
-                        },
-                        new
-                        {
-                            CategoryID = 2,
-                            Name = "Seconda Categoria"
-                        },
-                        new
-                        {
-                            CategoryID = 3,
-                            Name = "Terza Categoria"
-                        },
-                        new
-                        {
-                            CategoryID = 4,
-                            Name = "Quarta Categoria"
-                        },
-                        new
-                        {
-                            CategoryID = 5,
-                            Name = "Quinta Categoria"
-                        });
                 });
 
             modelBuilder.Entity("Gestionale.Models.Customer", b =>
@@ -91,43 +62,6 @@ namespace Gestionale.Data.Migrations
                     b.HasKey("CustomerID");
 
                     b.ToTable("Customers");
-
-                    b.HasData(
-                        new
-                        {
-                            CustomerID = 1,
-                            Address = "Via della azienda 1",
-                            CompanyName = "Azienda1",
-                            ContactName = "Cliente uno"
-                        },
-                        new
-                        {
-                            CustomerID = 2,
-                            Address = "Via della azienda 2",
-                            CompanyName = "Azienda2",
-                            ContactName = "Cliente due"
-                        },
-                        new
-                        {
-                            CustomerID = 3,
-                            Address = "Via della azienda 3",
-                            CompanyName = "Azienda3",
-                            ContactName = "Cliente tre"
-                        },
-                        new
-                        {
-                            CustomerID = 4,
-                            Address = "Via della azienda 4",
-                            CompanyName = "Azienda4",
-                            ContactName = "Cliente quattro"
-                        },
-                        new
-                        {
-                            CustomerID = 5,
-                            Address = "Via della azienda 5",
-                            CompanyName = "Azienda5",
-                            ContactName = "Cliente cinque"
-                        });
                 });
 
             modelBuilder.Entity("Gestionale.Models.Employee", b =>
@@ -153,51 +87,15 @@ namespace Gestionale.Data.Migrations
                         .IsRequired()
                         .HasColumnType("nvarchar(max)");
 
+                    b.Property<string>("OwnerID")
+                        .HasColumnType("nvarchar(max)");
+
+                    b.Property<int>("Status")
+                        .HasColumnType("int");
+
                     b.HasKey("EmployeeID");
 
                     b.ToTable("Employees");
-
-                    b.HasData(
-                        new
-                        {
-                            EmployeeID = 1,
-                            Address = "Via del dipendente 1",
-                            DOB = new DateTime(2022, 2, 15, 0, 0, 0, 0, DateTimeKind.Unspecified),
-                            FirstName = "NomeDip uno",
-                            LastName = "CognomeDip uno"
-                        },
-                        new
-                        {
-                            EmployeeID = 2,
-                            Address = "Via del dipendente 2",
-                            DOB = new DateTime(2022, 2, 15, 0, 0, 0, 0, DateTimeKind.Unspecified),
-                            FirstName = "NomeDip due",
-                            LastName = "CognomeDip due"
-                        },
-                        new
-                        {
-                            EmployeeID = 3,
-                            Address = "Via del dipendente 3",
-                            DOB = new DateTime(2022, 2, 15, 0, 0, 0, 0, DateTimeKind.Unspecified),
-                            FirstName = "NomeDip tre",
-                            LastName = "CognomeDip tre"
-                        },
-                        new
-                        {
-                            EmployeeID = 4,
-                            Address = "Via del dipendente 4",
-                            DOB = new DateTime(2022, 2, 15, 0, 0, 0, 0, DateTimeKind.Unspecified),
-                            FirstName = "NomeDip quattro",
-                            LastName = "CognomeDip quattro"
-                        },
-                        new
-                        {
-                            EmployeeID = 5,
-                            Address = "Via del dipendente 5",
-                            DOB = new DateTime(2022, 2, 15, 0, 0, 0, 0, DateTimeKind.Unspecified),
-                            FirstName = "NomeDip cinque",
-                            LastName = "CognomeDip cinque"
-                        });
                 });
 
             modelBuilder.Entity("Gestionale.Models.Order", b =>
@@ -231,32 +129,6 @@ namespace Gestionale.Data.Migrations
                     b.HasIndex("EmployeeID");
 
                     b.ToTable("Orders");
-
-                    b.HasData(
-                        new
-                        {
-                            OrderID = 1,
-                            CustomerID = 4,
-                            EmployeeID = 5,
-                            OrderDate = new DateTime(2022, 2, 15, 0, 0, 0, 0, DateTimeKind.Unspecified),
-                            ShipAddress = "Via della spedizione 1"
-                        },
-                        new
-                        {
-                            OrderID = 2,
-                            CustomerID = 5,
-                            EmployeeID = 4,
-                            OrderDate = new DateTime(2022, 2, 15, 0, 0, 0, 0, DateTimeKind.Unspecified),
-                            ShipAddress = "Via della spedizione 2"
-                        },
-                        new
-                        {
-                            OrderID = 3,
-                            CustomerID = 2,
-                            EmployeeID = 3,
-                            OrderDate = new DateTime(2022, 2, 15, 0, 0, 0, 0, DateTimeKind.Unspecified),
-                            ShipAddress = "Via della spedizione 3"
-                        });
                 });
 
             modelBuilder.Entity("Gestionale.Models.OrderDetail", b =>
@@ -281,29 +153,6 @@ namespace Gestionale.Data.Migrations
                     b.HasIndex("ProductID");
 
                     b.ToTable("OrderDetails");
-
-                    b.HasData(
-                        new
-                        {
-                            OrderID = 1,
-                            ProductID = 3,
-                            Quantity = 5,
-                            UnitPrice = 17.5m
-                        },
-                        new
-                        {
-                            OrderID = 1,
-                            ProductID = 5,
-                            Quantity = 10,
-                            UnitPrice = 30.0m
-                        },
-                        new
-                        {
-                            OrderID = 2,
-                            ProductID = 5,
-                            Quantity = 15,
-                            UnitPrice = 30.0m
-                        });
                 });
 
             modelBuilder.Entity("Gestionale.Models.Product", b =>
@@ -329,38 +178,6 @@ namespace Gestionale.Data.Migrations
                     b.HasIndex("CategoryID");
 
                     b.ToTable("Products");
-
-                    b.HasData(
-                        new
-                        {
-                            ProductID = 1,
-                            CategoryID = 3,
-                            ProductName = "Prodotto uno"
-                        },
-                        new
-                        {
-                            ProductID = 2,
-                            CategoryID = 5,
-                            ProductName = "Prodotto due"
-                        },
-                        new
-                        {
-                            ProductID = 3,
-                            CategoryID = 1,
-                            ProductName = "Prodotto tre"
-                        },
-                        new
-                        {
-                            ProductID = 4,
-                            CategoryID = 2,
-                            ProductName = "Prodotto quattro"
-                        },
-                        new
-                        {
-                            ProductID = 5,
-                            CategoryID = 4,
-                            ProductName = "Prodotto cinque"
-                        });
                 });
 
             modelBuilder.Entity("Microsoft.AspNetCore.Identity.IdentityRole", b =>
