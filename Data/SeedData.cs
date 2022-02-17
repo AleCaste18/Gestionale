@@ -19,6 +19,9 @@ namespace Gestionale.Data
                 var managerID = await EnsureUser(serviceProvider, testUserPw, "manager@gestionale.com");
                 await EnsureRole(serviceProvider, managerID, Constants.EmployeeManagersRole);
 
+                var userID = await EnsureUser(serviceProvider, testUserPw, "user@gestionale.com");
+                await EnsureRole(serviceProvider, managerID, Constants.EmployeeUsersRole);
+
                 SeedDB(context, testUserPw);
             }
         }

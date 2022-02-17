@@ -1,10 +1,12 @@
 ﻿using Gestionale.Models;
 using Gestionale.ViewModels;
+using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Identity;
 using Microsoft.AspNetCore.Mvc;
 
 namespace Gestionale.Controllers
 {
+    [Authorize(Roles = "Administrator")]
     public class AdministrationController : Controller 
     {
         private readonly RoleManager<IdentityRole> roleManager;

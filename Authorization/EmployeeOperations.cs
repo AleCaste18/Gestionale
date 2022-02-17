@@ -29,6 +29,7 @@ namespace Gestionale.Authorization
 
         public static readonly string EmployeeAdministratorsRole ="Administrator";
         public static readonly string EmployeeManagersRole = "Manager";
+        public static readonly string EmployeeUsersRole = "User";
     }
 
 }
