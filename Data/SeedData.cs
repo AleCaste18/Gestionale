@@ -1,17 +1,85 @@
-﻿using Gestionale.Models;
+﻿using Gestionale.Authorization;
+using Gestionale.Models;
+using Microsoft.AspNetCore.Identity;
 using Microsoft.EntityFrameworkCore;
 
 namespace Gestionale.Data
 {
     public class SeedData
     {
-        public static async Task Initialize(IServiceProvider serviceProvider, string testUserPw = "")
+        public static async Task Initialize(IServiceProvider serviceProvider, string testUserPw)
         {
             using (var context = new ApplicationDbContext(
                 serviceProvider.GetRequiredService<DbContextOptions<ApplicationDbContext>>()))
             {
+                var adminID = await EnsureUser(serviceProvider, testUserPw, "admin@gestionale.com");
+                await EnsureRole(serviceProvider, adminID, Constants.EmployeeAdministratorsRole);
+
+                // allowed user can create and edit contacts that they create
+                var managerID = await EnsureUser(serviceProvider, testUserPw, "manager@gestionale.com");
+                await EnsureRole(serviceProvider, managerID, Constants.EmployeeManagersRole);
+
                 SeedDB(context, testUserPw);
             }
+        }
+
+        private static async Task<string> EnsureUser(IServiceProvider serviceProvider,
+                                            string testUserPw, string UserName)
+        {
+            var userManager = serviceProvider.GetService<UserManager<IdentityUser>>();
+
+            var user = await userManager.FindByNameAsync(UserName);
+            if (user == null)
+            {
+                user = new IdentityUser
+                {
+                    UserName = UserName,
+                    EmailConfirmed = true
+                };
+                await userManager.CreateAsync(user, testUserPw);
+            }
+
+            if (user == null)
+            {
+                throw new Exception("The password is probably not strong enough!");
+            }
+
+            return user.Id;
+        }
+
+        private static async Task<IdentityResult> EnsureRole(IServiceProvider serviceProvider,
+                                                                      string uid, string role)
+        {
+            var roleManager = serviceProvider.GetService<RoleManager<IdentityRole>>();
+
+            if (roleManager == null)
+            {
+                throw new Exception("roleManager null");
+            }
+
+            IdentityResult IR;
+            if (!await roleManager.RoleExistsAsync(role))
+            {
+                IR = await roleManager.CreateAsync(new IdentityRole(role));
+            }
+
+            var userManager = serviceProvider.GetService<UserManager<IdentityUser>>();
+
+            //if (userManager == null)
+            //{
+            //    throw new Exception("userManager is null");
+            //}
+
+            var user = await userManager.FindByIdAsync(uid);
+
+            if (user == null)
+            {
+                throw new Exception("The testUserPw password was probably not strong enough!");
+            }
+
+            IR = await userManager.AddToRoleAsync(user, role);
+
+            return IR;
         }
 
         public static void SeedDB(ApplicationDbContext context, string adminID)
@@ -22,11 +90,11 @@ namespace Gestionale.Data
             }
 
             context.Customers.AddRange(
-                new Customer { CustomerID = 1, CompanyName = "Azienda1", ContactName = "Cliente uno", Address = "Via della azienda 1" },
-                new Customer { CustomerID = 2, CompanyName = "Azienda2", ContactName = "Cliente due", Address = "Via della azienda 2" },
-                new Customer { CustomerID = 3, CompanyName = "Azienda3", ContactName = "Cliente tre", Address = "Via della azienda 3" },
-                new Customer { CustomerID = 4, CompanyName = "Azienda4", ContactName = "Cliente quattro", Address = "Via della azienda 4" },
-                new Customer { CustomerID = 5, CompanyName = "Azienda5", ContactName = "Cliente cinque", Address = "Via della azienda 5" }
+                new Customer { CompanyName = "Azienda1", ContactName = "Cliente uno", Address = "Via della azienda 1" },
+                new Customer { CompanyName = "Azienda2", ContactName = "Cliente due", Address = "Via della azienda 2" },
+                new Customer { CompanyName = "Azienda3", ContactName = "Cliente tre", Address = "Via della azienda 3" },
+                new Customer { CompanyName = "Azienda4", ContactName = "Cliente quattro", Address = "Via della azienda 4" },
+                new Customer { CompanyName = "Azienda5", ContactName = "Cliente cinque", Address = "Via della azienda 5" }
                 );
             context.SaveChanges();
 
@@ -36,11 +104,11 @@ namespace Gestionale.Data
             }
 
             context.Employees.AddRange(
-                new Employee { EmployeeID = 1, LastName = "CognomeDip uno", FirstName = "NomeDip uno", Address = "Via del dipendente 1", DOB = new DateTime(2022, 02, 15) },
-                new Employee { EmployeeID = 2, LastName = "CognomeDip due", FirstName = "NomeDip due", Address = "Via del dipendente 2", DOB = new DateTime(2022, 02, 15) },
-                new Employee { EmployeeID = 3, LastName = "CognomeDip tre", FirstName = "NomeDip tre", Address = "Via del dipendente 3", DOB = new DateTime(2022, 02, 15) },
-                new Employee { EmployeeID = 4, LastName = "CognomeDip quattro", FirstName = "NomeDip quattro", Address = "Via del dipendente 4", DOB = new DateTime(2022, 02, 15) },
-                new Employee { EmployeeID = 5, LastName = "CognomeDip cinque", FirstName = "NomeDip cinque", Address = "Via del dipendente 5", DOB = new DateTime(2022, 02, 15) }
+                new Employee { LastName = "CognomeDip uno", FirstName = "NomeDip uno", Address = "Via del dipendente 1", DOB = new DateTime(2022, 02, 15), OwnerID = adminID, Status = EmployeeStatus.Approved },
+                new Employee { LastName = "CognomeDip due", FirstName = "NomeDip due", Address = "Via del dipendente 2", DOB = new DateTime(2022, 02, 15), OwnerID = adminID, Status = EmployeeStatus.Approved },
+                new Employee { LastName = "CognomeDip tre", FirstName = "NomeDip tre", Address = "Via del dipendente 3", DOB = new DateTime(2022, 02, 15), OwnerID = adminID, Status = EmployeeStatus.Approved },
+                new Employee { LastName = "CognomeDip quattro", FirstName = "NomeDip quattro", Address = "Via del dipendente 4", DOB = new DateTime(2022, 02, 15), OwnerID = adminID, Status = EmployeeStatus.Rejected },
+                new Employee { LastName = "CognomeDip cinque", FirstName = "NomeDip cinque", Address = "Via del dipendente 5", DOB = new DateTime(2022, 02, 15), OwnerID = adminID, Status = EmployeeStatus.Rejected }
                 );
             context.SaveChanges();
 
@@ -51,11 +119,11 @@ namespace Gestionale.Data
             }
 
             context.Categories.AddRange(
-                new Category { CategoryID = 1, Name = "Prima Categoria" },
-                new Category { CategoryID = 2, Name = "Seconda Categoria" },
-                new Category { CategoryID = 3, Name = "Terza Categoria" },
-                new Category { CategoryID = 4, Name = "Quarta Categoria" },
-                new Category { CategoryID = 5, Name = "Quinta Categoria" }
+                new Category { Name = "Prima Categoria" },
+                new Category { Name = "Seconda Categoria" },
+                new Category { Name = "Terza Categoria" },
+                new Category { Name = "Quarta Categoria" },
+                new Category { Name = "Quinta Categoria" }
                 );
             context.SaveChanges();
             
@@ -65,11 +133,11 @@ namespace Gestionale.Data
             }
 
             context.Products.AddRange(
-                new Product { ProductID = 1, ProductName = "Prodotto uno", CategoryID = 3 },
-                new Product { ProductID = 2, ProductName = "Prodotto due", CategoryID = 5 },
-                new Product { ProductID = 3, ProductName = "Prodotto tre", CategoryID = 1 },
-                new Product { ProductID = 4, ProductName = "Prodotto quattro", CategoryID = 2 },
-                new Product { ProductID = 5, ProductName = "Prodotto cinque", CategoryID = 4 }
+                new Product { ProductName = "Prodotto uno", CategoryID = 3 },
+                new Product { ProductName = "Prodotto due", CategoryID = 5 },
+                new Product { ProductName = "Prodotto tre", CategoryID = 1 },
+                new Product { ProductName = "Prodotto quattro", CategoryID = 2 },
+                new Product { ProductName = "Prodotto cinque", CategoryID = 4 }
                 );
             context.SaveChanges();
 
