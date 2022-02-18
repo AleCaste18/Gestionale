@@ -8,9 +8,10 @@ using Microsoft.AspNetCore.Mvc.Rendering;
 using Microsoft.EntityFrameworkCore;
 using Gestionale.Data;
 using Gestionale.Models;
+using Microsoft.AspNetCore.Authorization;
 
 namespace Gestionale.Controllers
-{
+{    
     public class EmployeesController : Controller
     {
         private readonly ApplicationDbContext _context;
@@ -43,6 +44,7 @@ namespace Gestionale.Controllers
 
             return View(employee);
         }
+
 
         // GET: Employees/Create
         public IActionResult Create()
