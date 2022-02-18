@@ -53,7 +53,9 @@ builder.Services.ConfigureApplicationCookie(options =>
 
 builder.Services.AddAuthorization(options =>
 {
-    options.AddPolicy("RolesEditor", policy => policy.RequireClaim("Edit Role"));
+    options.AddPolicy("EditRolePolicy", 
+                       policy => policy.RequireClaim("Edit Role"));
+
     options.FallbackPolicy = new AuthorizationPolicyBuilder() //Policy globale -> 
         .RequireAuthenticatedUser() //tutto richiede un'autenticazione (eccetto [allowed])
         .Build();

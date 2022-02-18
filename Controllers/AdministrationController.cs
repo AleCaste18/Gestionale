@@ -61,8 +61,8 @@ namespace Gestionale.Controllers
             return View(model);
         }
 
-        //[Authorize(Policy = "RolesEditor")]
         [HttpGet]
+        [Authorize(Policy = "EditRolePolicy")]
         public async Task<IActionResult> EditRole(string id)
         {
             // Find the role by Role ID
@@ -96,8 +96,8 @@ namespace Gestionale.Controllers
         }
 
         // This action responds to HttpPost and receives EditRoleViewModel
-        //[Authorize(Policy = "RolesEditor")]
         [HttpPost]
+        [Authorize(Policy = "EditRolePolicy")]
         public async Task<IActionResult> EditRole(EditRoleViewModel model)
         {
             var role = await roleManager.FindByIdAsync(model.Id);
