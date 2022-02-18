@@ -273,7 +273,9 @@ namespace Gestionale.Controllers
             }
         }
 
+
         [HttpPost]
+        [Authorize(Policy = "SuperAdminPolicy")]
         public async Task<IActionResult> DeleteUser(string id)
         {
             var user = await userManager.FindByIdAsync(id);

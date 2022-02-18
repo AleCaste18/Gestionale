@@ -55,6 +55,8 @@ builder.Services.AddAuthorization(options =>
 {
     options.AddPolicy("EditRolePolicy", 
                        policy => policy.RequireClaim("Edit Role"));
+    options.AddPolicy("SuperAdminPolicy",
+                       policy => policy.RequireRole("Admin", "User", "Manager"));
 
     options.FallbackPolicy = new AuthorizationPolicyBuilder() //Policy globale -> 
         .RequireAuthenticatedUser() //tutto richiede un'autenticazione (eccetto [allowed])
