@@ -62,7 +62,7 @@ namespace Gestionale.Controllers
         }
 
         [HttpGet]
-        [Authorize(Policy = "EditRolePolicyHasClaimNoValue")]
+        [Authorize(Policy = "EditRolePolicyWithHandler")]
         public async Task<IActionResult> EditRole(string id)
         {
             // Find the role by Role ID
@@ -97,7 +97,7 @@ namespace Gestionale.Controllers
 
         // This action responds to HttpPost and receives EditRoleViewModel
         [HttpPost]
-        [Authorize(Policy = "EditRolePolicyHasClaimNoValue")]
+        [Authorize(Policy = "EditRolePolicyWithHandler")]
         public async Task<IActionResult> EditRole(EditRoleViewModel model)
         {
             var role = await roleManager.FindByIdAsync(model.Id);

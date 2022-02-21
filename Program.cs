@@ -61,7 +61,7 @@ builder.Services.AddAuthorization(options =>
                        policy => policy.RequireClaim("Edit Role")); //policy basata sulla presenza della claimType
 
     options.AddPolicy("AdminOrManager",
-                       policy => policy.RequireRole("Admin", "Manager"));
+                       policy => policy.RequireRole("Admin", "Manager")); //policy basata sui ruoli
 
     options.AddPolicy("EditRolePolicyCustom", //policy personalizzata
         policy => policy.RequireAssertion(context => 
@@ -70,7 +70,7 @@ builder.Services.AddAuthorization(options =>
                                                                 claim.Type == "Edit Role" && claim.Value == "true") || //Approccio OR, per approccio AND usare policy.RequireClaim() + policy.RequireRole()
                                           context.User.IsInRole("Administrator")));
 
-    options.AddPolicy("EditRolePolicyWithHandler",  //policy basata su requirement basato su handler esplicito -> ManageAdminRolesAndClaimsRequirement() -> CanEditOnlyOtherAdminRolesAndClaimsHandler>();
+    options.AddPolicy("EditRolePolicyWithHandler",  //policy basata su un requirement basato su handler esplicito 
         policy => policy.AddRequirements(new ManageAdminRolesAndClaimsRequirement()));
 
     options.FallbackPolicy = new AuthorizationPolicyBuilder() //Policy globale -> 
@@ -86,6 +86,7 @@ builder.Services.AddSingleton<IAuthorizationHandler, EmployeeAdministratorsAutho
 builder.Services.AddSingleton<IAuthorizationHandler, EmployeeManagerAuthorizationHandler>();
 
 builder.Services.AddSingleton<IAuthorizationHandler, CanEditOnlyOtherAdminRolesAndClaimsHandler>();
+builder.Services.AddSingleton<IAuthorizationHandler, AdminHandler>();
 
 var app = builder.Build();
 
