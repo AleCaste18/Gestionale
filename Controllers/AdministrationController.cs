@@ -8,7 +8,7 @@ using System.Security.Claims;
 
 namespace Gestionale.Controllers
 {
-    [Authorize(Roles = "Administrator")]
+    
     public class AdministrationController : Controller 
     {
         private readonly RoleManager<IdentityRole> roleManager;

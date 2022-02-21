@@ -53,10 +53,21 @@ builder.Services.ConfigureApplicationCookie(options =>
 
 builder.Services.AddAuthorization(options =>
 {
-    options.AddPolicy("EditRolePolicy", 
-                       policy => policy.RequireClaim("Edit Role"));
-    options.AddPolicy("SuperAdminPolicy",
-                       policy => policy.RequireRole("Admin", "User", "Manager"));
+    options.AddPolicy("EditRolePolicyHasClaim", 
+                       policy => policy.RequireClaim("Edit Role", "true")); //policy basata sugli allowedValues della claimType
+
+    options.AddPolicy("EditRolePolicyHasClaimNoValue",
+                       policy => policy.RequireClaim("Edit Role").RequireClaim("")); //policy basata sulla presenza della claimType
+
+    options.AddPolicy("AdminOrManager",
+                       policy => policy.RequireRole("Admin", "Manager"));
+
+    options.AddPolicy("EditRolePolicyCustom", policy =>  //policy personalizzata
+        policy.RequireAssertion(context => 
+            context.User.IsInRole("Manager") && 
+            context.User.HasClaim(claim =>
+                claim.Type == "Edit Role" && claim.Value == "true") || //Approccio OR, per approccio AND usare policy.RequireClaim() + policy.RequireRole()
+            context.User.IsInRole("Administrator")));
 
     options.FallbackPolicy = new AuthorizationPolicyBuilder() //Policy globale -> 
         .RequireAuthenticatedUser() //tutto richiede un'autenticazione (eccetto [allowed])
@@ -64,14 +75,12 @@ builder.Services.AddAuthorization(options =>
 });
 
 // Authorization handlers.
-builder.Services.AddScoped<IAuthorizationHandler,
-                      EmployeeIsOwnerAuthorizationHandler>();
+builder.Services.AddScoped<IAuthorizationHandler, EmployeeIsOwnerAuthorizationHandler>();
 
-builder.Services.AddSingleton<IAuthorizationHandler,
-                      EmployeeAdministratorsAuthorizationHandler>();
+builder.Services.AddSingleton<IAuthorizationHandler, EmployeeAdministratorsAuthorizationHandler>();
 
-builder.Services.AddSingleton<IAuthorizationHandler,
-                      EmployeeManagerAuthorizationHandler>();
+builder.Services.AddSingleton<IAuthorizationHandler, EmployeeManagerAuthorizationHandler>();
+
 
 var app = builder.Build();
 
@@ -114,3 +123,5 @@ app.MapControllerRoute(
 app.MapRazorPages();
 
 app.Run();
+
+
