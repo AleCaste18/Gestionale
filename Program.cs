@@ -1,4 +1,5 @@
 using Gestionale.Authorization;
+using Gestionale.Authorization.Handler;
 using Gestionale.Data;
 using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Identity;
@@ -57,17 +58,20 @@ builder.Services.AddAuthorization(options =>
                        policy => policy.RequireClaim("Edit Role", "true")); //policy basata sugli allowedValues della claimType
 
     options.AddPolicy("EditRolePolicyHasClaimNoValue",
-                       policy => policy.RequireClaim("Edit Role").RequireClaim("")); //policy basata sulla presenza della claimType
+                       policy => policy.RequireClaim("Edit Role")); //policy basata sulla presenza della claimType
 
     options.AddPolicy("AdminOrManager",
                        policy => policy.RequireRole("Admin", "Manager"));
 
-    options.AddPolicy("EditRolePolicyCustom", policy =>  //policy personalizzata
-        policy.RequireAssertion(context => 
-            context.User.IsInRole("Manager") && 
-            context.User.HasClaim(claim =>
-                claim.Type == "Edit Role" && claim.Value == "true") || //Approccio OR, per approccio AND usare policy.RequireClaim() + policy.RequireRole()
-            context.User.IsInRole("Administrator")));
+    options.AddPolicy("EditRolePolicyCustom", //policy personalizzata
+        policy => policy.RequireAssertion(context => 
+                                          context.User.IsInRole("Manager") && 
+                                          context.User.HasClaim(claim =>
+                                                                claim.Type == "Edit Role" && claim.Value == "true") || //Approccio OR, per approccio AND usare policy.RequireClaim() + policy.RequireRole()
+                                          context.User.IsInRole("Administrator")));
+
+    options.AddPolicy("EditRolePolicyWithHandler",  //policy basata su requirement basato su handler esplicito -> ManageAdminRolesAndClaimsRequirement() -> CanEditOnlyOtherAdminRolesAndClaimsHandler>();
+        policy => policy.AddRequirements(new ManageAdminRolesAndClaimsRequirement()));
 
     options.FallbackPolicy = new AuthorizationPolicyBuilder() //Policy globale -> 
         .RequireAuthenticatedUser() //tutto richiede un'autenticazione (eccetto [allowed])
@@ -81,6 +85,7 @@ builder.Services.AddSingleton<IAuthorizationHandler, EmployeeAdministratorsAutho
 
 builder.Services.AddSingleton<IAuthorizationHandler, EmployeeManagerAuthorizationHandler>();
 
+builder.Services.AddSingleton<IAuthorizationHandler, CanEditOnlyOtherAdminRolesAndClaimsHandler>();
 
 var app = builder.Build();
 
