@@ -9,7 +9,8 @@ namespace Gestionale.Authorization
         protected override Task HandleRequirementAsync(
                                               AuthorizationHandlerContext context,
                                     OperationAuthorizationRequirement requirement,
-                                     Employee resource)
+                                     Employee resource) //The use of the Resource property is framework-specific.
+                                                        //Using information in the Resource property limits your authorization policies to particular frameworks
         {
             if (context.User == null)
             {
