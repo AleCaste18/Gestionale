@@ -55,7 +55,7 @@ builder.Services.ConfigureApplicationCookie(options =>
 builder.Services.AddAuthorization(options =>
 {
     options.AddPolicy("EditRolePolicyHasClaim", 
-                       policy => policy.RequireClaim("Edit Role", "true")); //policy basata sugli allowedValues della claimType
+                       policy => policy.RequireClaim("Edit Role", "true", "yes", "test")); //policy basata sugli allowedValues della claimType
 
     options.AddPolicy("EditRolePolicyHasClaimNoValue",
                        policy => policy.RequireClaim("Edit Role")); //policy basata sulla presenza della claimType
